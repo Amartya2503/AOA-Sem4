@@ -1,102 +1,64 @@
 #include <stdio.h>
-#define MAX 100
-#define OG 999
-int cost[MAX][MAX];
-int list[MAX];
-int nodes[MAX];
-int distance[MAX], parent[MAX];
-void initialize(int n)
-{
-    int i;
-    for (i = 0; i < n; i++)
-    {
-        list[nodes[i]] = 0;
-        distance[nodes[i]] = OG;
-        parent[nodes[i]] = OG;
-    }
-    distance[nodes[0]] = 0;
-}
-void relax(int u, int v)
-{
-    distance[v] = (distance[v] > distance[u] + cost[u][v]) ? distance[u] + cost[u][v] : distance[v];
-}
-int extractMin(int n)
-{
-    int i;
-    int min = MAX;
-    int mini = -1;
-    for (i = 0; i < n; i++)
-    {
-        if (distance[nodes[i]] < min && list[nodes[i]] != 1)
-        {
-            mini = nodes[i];
-            min = distance[nodes[i]];
-        }
-    }
-    if (mini != -1)
-        list[mini] = 1;
-    return mini;
-}
-void prims(int n)
-{
-    int i, j, k, u, v;
-    u = extractMin(n);
-    while (u != -1)
-    {
-        for (i = 0; i < n; i++)
-        {
-            if (cost[u][nodes[i]] != OG && list[nodes[i]] != 1 && cost[u][i] < distance[nodes[i]])
-            {
-                distance[nodes[i]] = cost[u][nodes[i]];
-                parent[nodes[i]] = u;
-            }
-        }
-        u = extractMin(n);
-    }
-}
+#include <conio.h>
+#include <stdlib.h>
+int i, j, k, a, b, u, v, n, ne = 1;
+int min, mincost = 0, cost[9][9], parent[9];
+int find(int);
+int uni(int, int);
 int main()
 {
-    int i, j, k, n, e, u, v, a, b, w;
-    int l;
-    printf("Number of nodes:\n");
+    printf("\n\tImplementation of Kruskal's algorithm\n");
+    printf("\nEnter the no. of vertices:");
     scanf("%d", &n);
-    printf("Enter nodes:\n");
-    for (i = 0; i < n; i++)
+    printf("\nEnter the cost adjacency matrix:\n");
+    for (i = 1; i <= n; i++)
     {
-        scanf("%d", &nodes[i]);
-    }
-    printf("Number of edges:\n");
-    scanf("%d", &e);
-    for (i = 0; i <= n; i++)
-    {
-        for (j = 0; j <= n; j++)
+        for (j = 1; j <= n; j++)
         {
-            cost[i][j] = OG;
+            scanf("%d", &cost[i][j]);
+            if (cost[i][j] == 0)
+                cost[i][j] = 999;
         }
     }
-    printf("Enter the startnode endnode weight:\n");
-    for (i = 0; i < e; i++)
+    printf("The edges of Minimum Cost Spanning Tree are\n");
+    while (ne < n)
     {
-        scanf("%d %d %d", &a, &b, &w);
-        cost[a][b] = w;
-        cost[b][a] = w;
+        for (i = 1, min = 999; i <= n; i++)
+        {
+            for (j = 1; j <= n; j++)
+            {
+                if (cost[i][j] < min)
+                {
+                    min = cost[i][j];
+                    a = u = i;
+                    b = v = j;
+                }
+            }
+        }
+        u = find(u);
+        v = find(v);
+        if (uni(u, v))
+        {
+            printf("%d edge (%d,%d) =%d\n", ne++, a, b, min);
+            mincost += min;
+        }
+        cost[a][b] = cost[b][a] = 999;
     }
-
-    initialize(n);
-    prims(n);
-    printf("The final distants are:\n");
-    printf("edge\tdistance\n");
-    for (i = 0; i < n; i++)
+    printf("\n\tMinimum cost = %d\n", mincost);
+    getch();
+}
+int find(int i)
+{
+    while (parent[i])
+        i = parent[i];
+    return i;
+}
+int uni(int i, int j)
+{
+    if (i != j)
     {
-        printf("%d - %d\t%d\n", parent[nodes[i]], i, distance[nodes[i]]);
+        parent[j] = i;
+        return 1;
     }
-    // printf("\n");
-    // for (i = 0; i < n; i++)
-    // {
-    //     for (j = 0; j < n; j++)
-    //     {
-    //         printf("%d\t", cost[nodes[i]][nodes[j]]);
-    //     }    
-    //     printf("\n");
-    // }
+    return 0;
 }
