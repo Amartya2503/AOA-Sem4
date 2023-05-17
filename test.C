@@ -29,15 +29,15 @@ int extractMin(int n)
     {
         if (distance[nodes[i]] < min && list[nodes[i]] != 1)
         {
-            mini = i;
+            mini = nodes[i];
             min = distance[nodes[i]];
         }
     }
     if (mini != -1)
-        list[nodes[mini]] = 1;
+        list[mini] = 1;
     return mini;
 }
-void djiktra(int n)
+void prims(int n)
 {
     int i, j, k, u, v;
     u = extractMin(n);
@@ -45,9 +45,10 @@ void djiktra(int n)
     {
         for (i = 0; i < n; i++)
         {
-            if (cost[u][i] != OG)
+            if (cost[u][nodes[i]] != OG && list[nodes[i]] != 1 && cost[u][i] < distance[nodes[i]])
             {
-                relax(u, i);
+                distance[nodes[i]] = cost[u][nodes[i]];
+                parent[nodes[i]] = u;
             }
         }
         u = extractMin(n);
@@ -80,11 +81,22 @@ int main()
         cost[a][b] = w;
         cost[b][a] = w;
     }
+
     initialize(n);
-    djiktra(n);
+    prims(n);
     printf("The final distants are:\n");
+    printf("edge\tdistance\n");
     for (i = 0; i < n; i++)
     {
-        printf("%d\t", distance[nodes[i]]);
+        printf("%d - %d\t%d\n", parent[nodes[i]], i, distance[nodes[i]]);
     }
+    // printf("\n");
+    // for (i = 0; i < n; i++)
+    // {
+    //     for (j = 0; j < n; j++)
+    //     {
+    //         printf("%d\t", cost[nodes[i]][nodes[j]]);
+    //     }    
+    //     printf("\n");
+    // }
 }
