@@ -47,7 +47,7 @@ int main(){
     }
     start_t = clock();
     selectionsort(arr,n);
-    end_t = clock();222
+    end_t = clock();
     print(arr,n);
     cout<<"\n Time required for this case is :"<<end_t - start_t;
 }

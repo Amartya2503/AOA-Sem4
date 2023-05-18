@@ -1,64 +1,80 @@
+// Rabin Karp
 #include <stdio.h>
-#include <conio.h>
-#include <stdlib.h>
-int i, j, k, a, b, u, v, n, ne = 1;
-int min, mincost = 0, cost[9][9], parent[9];
-int find(int);
-int uni(int, int);
+#include <string.h>
+
+// d is the number of characters in the input alphabet
+#define d 256
+
+/* pat -> pattern
+    txt -> text
+    q -> A prime number
+*/
+void search(char pat[], char txt[], int q)
+{
+    int M = strlen(pat);
+    int N = strlen(txt);
+    int i, j;
+    int p = 0; // hash value for pattern
+    int t = 0; // hash value for txt
+    int h = 1;
+
+    // The value of h would be "pow(d, M-1)%q"
+    for (i = 0; i < M - 1; i++)
+        h = (h * d) % q;
+
+    // Calculate the hash value of pattern and first
+    // window of text
+    for (i = 0; i < M; i++)
+    {
+        p = (d * p + pat[i]) % q;
+        t = (d * t + txt[i]) % q;
+    }
+
+    // Slide the pattern over text one by one
+    for (i = 0; i <= N - M; i++)
+    {
+
+        // Check the hash values of current window of text
+        // and pattern. If the hash values match then only
+        // check for characters one by one
+        if (p == t)
+        {
+            /* Check for characters one by one */
+            for (j = 0; j < M; j++)
+            {
+                if (pat[i + j] != txt[j])
+                    break;
+            }
+
+            // if p == t and pat[0...M-1] = txt[i, i+1, ...i+M-1]
+            if (j == M)
+                printf("Pattern found at index %d \n", i);
+        }
+
+        // Calculate hash value for next window of text: Remove
+        // leading digit, add trailing digit
+        if (i < N - M)
+        {
+            t = (d * (t - txt[i] * h) + txt[i + M]) % q;
+
+            // We might get negative value of t, converting it
+            // to positive
+            if (t < 0)
+                t = (t + q);
+        }
+    }
+}
+
+/* Driver Code */
 int main()
 {
-    printf("\n\tImplementation of Kruskal's algorithm\n");
-    printf("\nEnter the no. of vertices:");
-    scanf("%d", &n);
-    printf("\nEnter the cost adjacency matrix:\n");
-    for (i = 1; i <= n; i++)
-    {
-        for (j = 1; j <= n; j++)
-        {
-            scanf("%d", &cost[i][j]);
-            if (cost[i][j] == 0)
-                cost[i][j] = 999;
-        }
-    }
-    printf("The edges of Minimum Cost Spanning Tree are\n");
-    while (ne < n)
-    {
-        for (i = 1, min = 999; i <= n; i++)
-        {
-            for (j = 1; j <= n; j++)
-            {
-                if (cost[i][j] < min)
-                {
-                    min = cost[i][j];
-                    a = u = i;
-                    b = v = j;
-                }
-            }
-        }
-        u = find(u);
-        v = find(v);
-        if (uni(u, v))
-        {
-            printf("%d edge (%d,%d) =%d\n", ne++, a, b, min);
-            mincost += min;
-        }
-        cost[a][b] = cost[b][a] = 999;
-    }
-    printf("\n\tMinimum cost = %d\n", mincost);
-    getch();
-}
-int find(int i)
-{
-    while (parent[i])
-        i = parent[i];
-    return i;
-}
-int uni(int i, int j)
-{
-    if (i != j)
-    {
-        parent[j] = i;
-        return 1;
-    }
+    char txt[] = "ABABABABBBBAABA";
+    char pat[] = "BB";
+
+    // A prime number
+    int q = 101;
+
+    // function call
+    search(pat, txt, q);
     return 0;
 }

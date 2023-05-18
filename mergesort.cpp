@@ -3,7 +3,7 @@ using namespace std;
 int b[100];
 
 void merge(int arr[], int l, int mid, int r){
-    int i,j;
+    int i,j,k;
     i=l;
     j=mid+1;
     int index = i;
@@ -22,6 +22,22 @@ void merge(int arr[], int l, int mid, int r){
             j++;
             index++;
         }
+    }
+    if(i != mid)
+    {
+        for(k=i; k<mid; k++ )
+        {
+            b[index] = arr[k];
+            index++;
+        }
+    }
+    if(j != r)
+    {
+         for(k=j; k<r; k++ )
+        {
+            b[index] = arr[k];
+            index++;
+        }    
     }
 }
 
